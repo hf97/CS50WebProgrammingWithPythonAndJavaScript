@@ -2,12 +2,23 @@
 <html lang="en">
     <head>
         <title>Search</title>
+        <link href="style.css" rel="stylesheet">
     </head>
     <body>
-        <form action="https://google.com/search">
-            <input type="text" name="q">
-            <input type="submit" value="Google Search">
-        </form>
+        <div class="back">
+            <a href="./pages/imageSearch.html">Image Search</a>
+            <a href="./pages/advancedSearch.html">Advanced Search</a>
+        </div>
+
+        <div class="form">
+            <form action="https://google.com/search">
+                <input id="bar" type="text" name="q">
+                <div id="bt">
+                    <input type="submit" value="Google Search">
+                    <input type="submit" value="I'm Feeling Lucky">
+                </div>
+            </form>
+        </div>
     </body>
 </html>
 
