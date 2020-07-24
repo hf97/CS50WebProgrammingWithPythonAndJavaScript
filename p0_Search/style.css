@@ -1,4 +1,8 @@
 
+#search {
+    text-align: center;
+}
+
 .back {
     vertical-align: top;
     float: right;
@@ -11,7 +15,7 @@
     -moz-transform: translateX(-50%) translateY(-50%);
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
-    width: 32%;
+    width: 508px;
     clear: both;
 }
 
@@ -29,3 +33,10 @@
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
 }
+
+#submitASearch {
+    background-color: blue;
+    color: white;
+}
+
+//TODO media queries
