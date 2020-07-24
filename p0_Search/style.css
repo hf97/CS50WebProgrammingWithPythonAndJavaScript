@@ -19,10 +19,11 @@
     clear: both;
 }
 
-#bar {
+.bar {
     width: 500px;
     height: 30px;
     border-radius: 15px;
+    outline: none;
 }
 
 #bt {
@@ -37,6 +38,15 @@
 #submitASearch {
     background-color: blue;
     color: white;
+    margin-top: 25px;
+    margin-left: 270px;
 }
 
-//TODO media queries
+#formASearch {
+    display: flex;
+}
+
+#Awords {
+    flex: 0 0 11%;
+}
+
