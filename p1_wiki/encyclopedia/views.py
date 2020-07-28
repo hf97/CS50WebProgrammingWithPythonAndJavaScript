@@ -1,6 +1,8 @@
 from encyclopedia.util import save_entry
 import markdown2
 
+import random
+
 from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -55,3 +57,12 @@ def new(request):
             "form": NewPage()
         })
 
+# RANDOM PAGE -----------------------------------
+def randomPage(request):
+    entries = util.list_entries() # list of wikis
+    selected_page = random.choice(entries)
+    return render(request, "encyclopedia/entry.html", {
+        "content": testar(util.get_entry(selected_page)),
+        "title": selected_page
+    })
+ 
