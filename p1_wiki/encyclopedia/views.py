@@ -13,7 +13,7 @@ from . import util
 # INDEX -----------------------------------------
 def index(request):
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "entries": util.list_entries(),
     })
 
 # PAGES -----------------------------------------
@@ -36,6 +36,7 @@ class NewPage(forms.Form):
 def new(request):
     if request.method == "POST":
         form = NewPage(request.POST)
+        print(form)
         if form.is_valid():
             if util.get_entry(form.cleaned_data["name"]) is None:
                 title = form.cleaned_data["name"]
@@ -67,14 +68,66 @@ def randomPage(request):
     })
  
 # SEARCH ----------------------------------------
+class searchForm(forms.Form):
+    searchQuerie = forms.CharField()
+
+def searchResults(name):
+    listSearchResults=[]
+    entries = util.list_entries()
+    for entry in entries:
+        if name.lower() in entry.lower():
+            listSearchResults.append(entry)
+    return listSearchResults
+
+
 def search(request):
     if(request.method=="POST"):
-        form = NewPage(request.POST)
-        if form.is_valid():
-            print (form.cleaned_data['q'])
-
-            return HttpResponseRedirect(reverse(form.cleaned_data['q'])) # Redirect after POST
+        form = searchForm(request.POST)
+        if util.get_entry(request.POST.get("q")) is not None:
+            title = request.POST.get("q")
+            return render(request, "encyclopedia/entry.html", {
+                "content": testar(util.get_entry(title)),
+                "title": title
+            })
+        else:
+            return render(request, "encyclopedia/search.html", {
+            "searchResults": searchResults(request.POST.get("q")),
+        })
     else:
-        form = NewPage() # An unbound form
+        return render(request, "encyclopedia/index.html", {
+        "entries": util.list_entries(),
+    })
 
-    return render(request,"encyclopedia/index.html")
+
+# EDIT ------------------------------------------
+# class NewPage(forms.Form):
+#     name = forms.CharField(label="New Page")
+#     info = forms.CharField(widget=forms.Textarea)
+
+
+
+# def new(request):
+#     if request.method == "POST":
+#         form = NewPage(request.POST)
+#         print(form)
+#         if form.is_valid():
+#             if util.get_entry(form.cleaned_data["name"]) is None:
+#                 title = form.cleaned_data["name"]
+#                 info = form.cleaned_data["info"]
+#                 text = "# " + title + "\n" + info
+#                 util.save_entry(title, text)
+#                 return HttpResponseRedirect(reverse("index"))
+#             else:
+#                 return render(request, "encyclopedia/new.html", {
+#                 "form": form,
+#                 "message": "Already Exists"
+#             })
+#         else:
+#             return render(request, "encyclopedia/new.html", {
+#                 "form": form
+#             })
+#     else:
+#         return render(request, "encyclopedia/new.html", {
+#             "form": NewPage()
+#         })
+

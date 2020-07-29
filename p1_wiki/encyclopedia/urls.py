@@ -9,5 +9,6 @@ urlpatterns = [
     path("new", views.new, name="new"),
     path("randomPage", views.randomPage, name="randomPage"),
     path("search", views.search, name="search"),
+    # path("edit", views.edit, name="edit"),
     path("<str:title>", views.title, name="title")
 ]
