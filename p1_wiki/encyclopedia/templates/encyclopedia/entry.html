@@ -6,6 +6,7 @@
 
 {% block body %}
     {% if content != None %}
+        <a href="{% url 'edit' title content %}">Edit Page</a>
         {{content | safe}}
     {% else %}
         <h6>Não existe</h6>

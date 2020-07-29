@@ -6,7 +6,7 @@ import random
 from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from . import util
 
@@ -100,34 +100,10 @@ def search(request):
 
 
 # EDIT ------------------------------------------
-# class NewPage(forms.Form):
-#     name = forms.CharField(label="New Page")
-#     info = forms.CharField(widget=forms.Textarea)
+def edit(request, title, content):
+    return 
 
-
-
-# def new(request):
-#     if request.method == "POST":
-#         form = NewPage(request.POST)
-#         print(form)
-#         if form.is_valid():
-#             if util.get_entry(form.cleaned_data["name"]) is None:
-#                 title = form.cleaned_data["name"]
-#                 info = form.cleaned_data["info"]
-#                 text = "# " + title + "\n" + info
-#                 util.save_entry(title, text)
-#                 return HttpResponseRedirect(reverse("index"))
-#             else:
-#                 return render(request, "encyclopedia/new.html", {
-#                 "form": form,
-#                 "message": "Already Exists"
-#             })
-#         else:
-#             return render(request, "encyclopedia/new.html", {
-#                 "form": form
-#             })
-#     else:
-#         return render(request, "encyclopedia/new.html", {
-#             "form": NewPage()
-#         })
+def save(request, title, content):
+    util.save_entry(title,content)
+    return HttpResponseRedirect(reverse("index"))
 
