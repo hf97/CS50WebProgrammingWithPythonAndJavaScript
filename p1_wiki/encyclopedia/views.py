@@ -66,3 +66,15 @@ def randomPage(request):
         "title": selected_page
     })
  
+# SEARCH ----------------------------------------
+def search(request):
+    if(request.method=="POST"):
+        form = NewPage(request.POST)
+        if form.is_valid():
+            print (form.cleaned_data['q'])
+
+            return HttpResponseRedirect(reverse(form.cleaned_data['q'])) # Redirect after POST
+    else:
+        form = NewPage() # An unbound form
+
+    return render(request,"encyclopedia/index.html")
