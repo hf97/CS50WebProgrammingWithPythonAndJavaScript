@@ -1,7 +1,7 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    Edit Page
+    {{title}}
 {% endblock %}
 
 {% block body %}
@@ -9,7 +9,7 @@
 
     <form action="{% url 'save' %}" method="POST">
         {% csrf_token %}
-        <textarea class="form-control" rows="10" id="aboutme" value="panados"></textarea>
-        <input type="submit">
+        <textarea class="form-control" rows="20" id="newContent" name="newContent">{{ content }}</textarea>
+        <input type="submit" value="save">
     </form>
 {% endblock %}

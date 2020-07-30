@@ -6,7 +6,14 @@
 
 {% block body %}
     {% if content != None %}
-        <a href="{% url 'edit' title content %}">Edit Page</a>
+        <!-- <a href="{% url 'edit' title %}">Edit Page</a> -->
+
+        <form action="{% url 'edit' title %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="conteudo" value="{{content}}">            
+            <input type="submit" value="Edit">
+        </form>  
+
         {{content | safe}}
     {% else %}
         <h6>Não existe</h6>

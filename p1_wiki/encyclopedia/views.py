@@ -1,14 +1,16 @@
-from encyclopedia.util import save_entry
-import markdown2
-
-import random
-
 from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect, render
 
 from . import util
+
+import markdown2
+
+import html2markdown
+
+import random
+
 
 # INDEX -----------------------------------------
 def index(request):
@@ -30,8 +32,9 @@ def title(request, title):
 
 # NEW PAGE --------------------------------------
 class NewPage(forms.Form):
-    name = forms.CharField(label="New Page")
-    info = forms.CharField(widget=forms.Textarea)
+    name = forms.CharField(label="Title")
+    info = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}))
+
 
 def new(request):
     if request.method == "POST":
@@ -100,10 +103,15 @@ def search(request):
 
 
 # EDIT ------------------------------------------
-def edit(request, title, content):
-    return 
+def edit(request, title):
+    return render(request, "encyclopedia/edit.html", {
+        "title": title,
+        "content": html2markdown.convert(request.POST.get("conteudo"))
+    })
 
-def save(request, title, content):
-    util.save_entry(title,content)
-    return HttpResponseRedirect(reverse("index"))
+
+def save(request):
+    print()
+    # util.save_entry(title,content)
+    # return HttpResponseRedirect(reverse("index"))
 

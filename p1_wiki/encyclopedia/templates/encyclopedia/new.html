@@ -13,7 +13,7 @@
 
     <form action="{% url 'new' %}" method="POST">
         {% csrf_token %}
-        {{ form }}
         <input type="submit">
+        {{ form }}
     </form>
 {% endblock %}
