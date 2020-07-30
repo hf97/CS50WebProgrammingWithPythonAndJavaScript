@@ -9,6 +9,7 @@
 
     <form action="{% url 'save' %}" method="POST">
         {% csrf_token %}
+        <input type="hidden" name="title" value="{{title}}">            
         <textarea class="form-control" rows="20" id="newContent" name="newContent">{{ content }}</textarea>
         <input type="submit" value="save">
     </form>

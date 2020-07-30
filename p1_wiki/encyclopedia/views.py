@@ -19,10 +19,13 @@ def index(request):
     })
 
 # PAGES -----------------------------------------
+
+
 def testar(teste):
     if(teste is not None):
         return markdown2.markdown(teste)
     return None
+
 
 def title(request, title):
     return render(request, "encyclopedia/entry.html", {
@@ -31,9 +34,12 @@ def title(request, title):
     })
 
 # NEW PAGE --------------------------------------
+
+
 class NewPage(forms.Form):
     name = forms.CharField(label="Title")
-    info = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}))
+    info = forms.CharField(required=False, widget=forms.Textarea(
+        attrs={'rows': 4, 'cols': 40}))
 
 
 def new(request):
@@ -49,9 +55,9 @@ def new(request):
                 return HttpResponseRedirect(reverse("index"))
             else:
                 return render(request, "encyclopedia/new.html", {
-                "form": form,
-                "message": "Already Exists"
-            })
+                    "form": form,
+                    "message": "Already Exists"
+                })
         else:
             return render(request, "encyclopedia/new.html", {
                 "form": form
@@ -62,20 +68,25 @@ def new(request):
         })
 
 # RANDOM PAGE -----------------------------------
+
+
 def randomPage(request):
-    entries = util.list_entries() # list of wikis
+    entries = util.list_entries()  # list of wikis
     selected_page = random.choice(entries)
     return render(request, "encyclopedia/entry.html", {
         "content": testar(util.get_entry(selected_page)),
         "title": selected_page
     })
- 
+
 # SEARCH ----------------------------------------
+
+
 class searchForm(forms.Form):
     searchQuerie = forms.CharField()
 
+
 def searchResults(name):
-    listSearchResults=[]
+    listSearchResults = []
     entries = util.list_entries()
     for entry in entries:
         if name.lower() in entry.lower():
@@ -84,7 +95,7 @@ def searchResults(name):
 
 
 def search(request):
-    if(request.method=="POST"):
+    if(request.method == "POST"):
         form = searchForm(request.POST)
         if util.get_entry(request.POST.get("q")) is not None:
             title = request.POST.get("q")
@@ -94,12 +105,12 @@ def search(request):
             })
         else:
             return render(request, "encyclopedia/search.html", {
-            "searchResults": searchResults(request.POST.get("q")),
-        })
+                "searchResults": searchResults(request.POST.get("q")),
+            })
     else:
         return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries(),
-    })
+            "entries": util.list_entries(),
+        })
 
 
 # EDIT ------------------------------------------
@@ -111,7 +122,5 @@ def edit(request, title):
 
 
 def save(request):
-    print()
-    # util.save_entry(title,content)
-    # return HttpResponseRedirect(reverse("index"))
-
+    util.save_entry(request.POST.get("title"), markdown2.markdown(request.POST.get("newContent")))
+    return HttpResponseRedirect(reverse("index"))

@@ -1,2 +1,0 @@
-# panados3
-sddasfvg

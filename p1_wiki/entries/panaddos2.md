@@ -1,2 +1,0 @@
-# panaddos2
-ecadfbgsfgb
