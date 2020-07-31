@@ -4,4 +4,11 @@
     <h2>Create Listing</h2>
 
     <p>Create Listing</p>
+
+    <form action="{% url 'index' %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit">
+    </form>
+
 {% endblock %}

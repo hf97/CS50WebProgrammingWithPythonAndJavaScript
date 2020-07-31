@@ -89,4 +89,9 @@ class NewListing(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all())
 
 def createListing(request):
-    return render(request, "auctions/createListing.html")
+    form = NewListing(request.POST)
+    return render(request, "auctions/createListing.html", {
+        "form": form
+    })
+
+
