@@ -3,16 +3,18 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
-from .models import Listing, User
+from .models import Category, Listing, User
 
-
+# INDEX -----------------------------------------
 def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.all()
     })
 
 
+# LOGIN -----------------------------------------
 def login_view(request):
     if request.method == "POST":
 
@@ -33,11 +35,13 @@ def login_view(request):
         return render(request, "auctions/login.html")
 
 
+# LOGOUT ----------------------------------------
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
 
+# REGISTER --------------------------------------
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -65,13 +69,24 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
+# CATEGORIES ------------------------------------
 def categories(request):
-    pass
+    return render(request, "auctions/categories.html")
 
 
+# WATCHLIST -------------------------------------
 def watchlist(request):
-    pass
+    return render(request, "auctions/watchlist.html")
 
+
+# CREATE LISTING --------------------------------
+class NewListing(forms.Form):
+    name = forms.CharField(max_length=64)
+    description = forms.CharField(max_length=1000)
+    startingBid = forms.FloatField()
+    # TODO image required false ?
+    image = forms.URLField()
+    category = forms.ModelChoiceField(queryset=Category.objects.all())
 
 def createListing(request):
-    pass
+    return render(request, "auctions/createListing.html")

@@ -10,15 +10,15 @@ class Category(models.Model):
     name = models.CharField(max_length=64)
 
 class Listing(models.Model):
-    title = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
     description = models.CharField(max_length=1000)
     startingBid = models.FloatField()
     image = models.URLField()
     category = models.ForeignKey("Category", on_delete=models.PROTECT)
-    bid = models.ForeignKey("Bid", on_delete=models.PROTECT)
 
 class Bid(models.Model):
     bidder = models.ForeignKey("User", on_delete=models.PROTECT)
+    listing = models.ForeignKey("Listing", on_delete=models.PROTECT, default=1)
     price = models.FloatField()
 
 class Comment(models.Model):
