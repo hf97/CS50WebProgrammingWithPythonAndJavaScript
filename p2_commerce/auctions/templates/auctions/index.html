@@ -4,8 +4,17 @@
     <h2>Active Listings</h2>
 
     {% for listing in listings %}
-        <div id="{{ listing.title }}">
-            {{ listing }}
+        <div class="container" id="{{ listing.id }}">
+            <div class="row no-gutters">
+                <div class="col-sm-4 col-md-4">
+                    <img src="{{ listing.image }}" alt="listing image">
+                </div>
+                <div class="col-8 col-md-8">
+                    <p>{{ listing.name }}</p>
+                    <p>{{ listing.description }}</p>
+                    <p>{{ listing.startingBid }}</p>
+                </div>
+            </div>
         </div>
     {% endfor %}
 {% endblock %}
