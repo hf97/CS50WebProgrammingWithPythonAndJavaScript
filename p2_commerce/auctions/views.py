@@ -80,23 +80,22 @@ def watchlist(request):
 
 
 # CREATE LISTING --------------------------------
+class NewListing(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all())
+
 def createListing(request):
+    form = NewListing()
     return render(request, "auctions/createListing.html", {
-        "categories": Category.objects.all()
+        "form": form
     })
 
 
 # SAVE LISTING ----------------------------------
-# class NewListing(forms.Form):
-#     name = forms.CharField(max_length=64)
-#     description = forms.CharField(max_length=1000)
-#     startingBid = forms.FloatField()
-#     # TODO image required false ?
-#     image = forms.URLField()
-#     category = forms.ModelChoiceField(queryset=Category.objects.all())
-
 def saveListing(request):
     if request.method == "POST":
-        print(request.POST)
-        # Listing.objects.create()
+        Listing.objects.create(name=request.POST.get("name"), description=request.POST.get("description"), startingBid=request.POST.get("startingBid"), image=request.POST.get("image"), user=request.user, category=Category.objects.get(id=request.POST.get("category")))
+    # TODO messagem erro
+    return render(request, "auctions/index.html", {
+        "listings": Listing.objects.all()
+    })
 

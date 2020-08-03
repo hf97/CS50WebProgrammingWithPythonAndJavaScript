@@ -82,7 +82,7 @@ def randomPage(request):
 
 
 class searchForm(forms.Form):
-    searchQuerie = forms.CharField()
+    searchQuerie = forms.CharField(request.POST)
 
 
 def searchResults(name):

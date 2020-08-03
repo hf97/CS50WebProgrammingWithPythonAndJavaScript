@@ -3,31 +3,19 @@
 {% block body %}
     <h2>Create Listing</h2>
 
-    <p>Create Listing</p>
-
-    <!-- <form action="{% url 'index' %}" method="POST">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit">
-    </form> -->
-
     <form action="{% url 'saveListing' %}" method="POST">
         {% csrf_token %}
         <label for="name">Name (max_length=64):</label>
         <input type="text" id="name" name="name">
         <br>
         <label for="startingBid">Starting bid:</label>
-        <input type="text" id="startingBid" name="startingBid">
+        <input type="number" id="startingBid" name="startingBid" min="0" step=".01">
         <br>
-        <label for="image">Image:</label>
+        <label for="image">Image (URL):</label>
         <input type="text" id="image" name="image">
         <br>
         <label for="name">Category:</label>
-        <select name="category" id="category">
-            {% for category in categories %}
-            <option value="{{ category.name }}">{{ category.name }}</option>
-            {% endfor %}
-        </select>
+        {{ form }}
         <br>
         <label for="description">Description (max_length=1000):</label><br>
         <textarea name="description" id="description" cols="50" rows="10"></textarea>

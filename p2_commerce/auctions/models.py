@@ -14,6 +14,8 @@ class Comment(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
+    def __str__(self):
+        return self.name
 
 class Listing(models.Model):
     name = models.CharField(max_length=64)
