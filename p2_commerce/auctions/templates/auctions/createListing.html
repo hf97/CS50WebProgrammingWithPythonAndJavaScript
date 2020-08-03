@@ -5,10 +5,34 @@
 
     <p>Create Listing</p>
 
-    <form action="{% url 'index' %}" method="POST">
+    <!-- <form action="{% url 'index' %}" method="POST">
         {% csrf_token %}
         {{ form }}
         <input type="submit">
-    </form>
+    </form> -->
+
+    <form action="{% url 'createListing' %}" method="POST">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label for="startingBid">Starting bid:</label>
+        <input type="text" id="startingBid" name="startingBid">
+        <br>
+        <label for="image">Image:</label>
+        <input type="text" id="image" name="image">
+        <br>
+        <label for="name">Category:</label>
+        <select name="category" id="category">
+            {% for category in categories %}
+            <option value="{{ category.name }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="description">Description:</label><br>
+        <textarea name="description" id="description" cols="50" rows="10"></textarea>
+        <br>
+        <input type="submit" value="Create listing">
+    </form>  
 
 {% endblock %}
