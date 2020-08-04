@@ -71,8 +71,19 @@ def register(request):
 
 # CATEGORIES ------------------------------------
 def categories(request):
-    return render(request, "auctions/categories.html")
+    return render(request, "auctions/categories.html", {
+        "categories": Category.objects.all()
+    })
 
+def category(request, category):
+    listings = []
+    for listing in Listing.objects.all():
+        if str(listing.category) == (category):
+            listings.append(listing)
+    return render(request, "auctions/category.html", {
+        "listings": listings,
+        "category": category
+    })
 
 # WATCHLIST -------------------------------------
 def watchlist(request):

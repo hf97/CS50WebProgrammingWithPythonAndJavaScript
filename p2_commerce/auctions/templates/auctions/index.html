@@ -11,8 +11,9 @@
                 </div>
                 <div class="col-8 col-md-8">
                     <a href="{% url 'listing' listing.id %}">{{ listing.name }}</a>
-                    <p>{{ listing.description }}</p>
-                    <p>{{ listing.startingBid }}</p>
+                    <p>Starting Bid: {{ listing.startingBid }}</p>
+                    <p>Category: {{ listing.category }}</p>
+                    <p>Description: {{ listing.description }}</p>
                 </div>
             </div>
         </div>
