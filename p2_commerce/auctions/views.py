@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import Category, Listing, User
+from .models import Category, Listing, User, WatchList, Bid, Comment
 
 # INDEX -----------------------------------------
 def index(request):
@@ -75,19 +75,26 @@ def categories(request):
         "categories": Category.objects.all()
     })
 
-def category(request, category):
+def singleCategory(request, category):
     listings = []
     for listing in Listing.objects.all():
         if str(listing.category) == (category):
             listings.append(listing)
-    return render(request, "auctions/category.html", {
+    return render(request, "auctions/simgleCategory.html", {
         "listings": listings,
         "category": category
     })
 
 # WATCHLIST -------------------------------------
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    listings = []
+    for list in WatchList.objects.all():
+        if request.user == list.user:
+            for elem in list.listings.all():
+                listings.append(elem)
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings
+    })
 
 
 # CREATE LISTING --------------------------------

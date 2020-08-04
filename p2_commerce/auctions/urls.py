@@ -13,5 +13,5 @@ urlpatterns = [
     path("createListing", views.createListing, name="createListing"),
     path("saveListing", views.saveListing, name="saveListing"),
     path("<int:listingId>", views.listing, name="listing"),
-    path("<str:category>", views.category, name="category")
+    path("<str:singleCategory>", views.singleCategory, name="singleCategory")
 ]

@@ -30,3 +30,6 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.PROTECT)
     price = models.FloatField()
 
+class WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    listings = models.ManyToManyField(Listing, blank=True, related_name="watch")
