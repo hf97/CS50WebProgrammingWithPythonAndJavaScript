@@ -29,3 +29,4 @@ class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.PROTECT)
     listing = models.ForeignKey(Listing, on_delete=models.PROTECT)
     price = models.FloatField()
+
