@@ -99,3 +99,10 @@ def saveListing(request):
         "listings": Listing.objects.all()
     })
 
+
+# LISTING ---------------------------------------
+def listing(request, listingId):
+    listing = Listing.objects.get(id=listingId)
+    return render(request, "auctions/listing.html", {
+        "listing": listing
+    })
