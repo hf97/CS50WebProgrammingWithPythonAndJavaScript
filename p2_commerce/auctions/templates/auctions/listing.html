@@ -16,4 +16,15 @@
     <p>Category: {{ listing.category }}</p>
 
     <p>Description: {{ listing.description }}</p>
+
+    <a href="{% url 'comment' listing.id %}">Add comment</a>
+    {% for com in comments %}
+        <div class="userComment">
+            <i>User: {{ com.user }}</i>
+            <br>
+            <i>Date: {{ com.date }}</i>
+            <br>
+            <i>Text: {{ com.text }}</i>
+        </div>    
+    {% endfor %}
 {% endblock %}

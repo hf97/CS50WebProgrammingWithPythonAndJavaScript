@@ -143,7 +143,24 @@ def listing(request, listingId):
         inWL = True
     else:
         inWL = False
+    comments = []
+    for comment in Comment.objects.all():
+        if comment.listing.id == listingId:
+            comments.append(comment)
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "inWatchlist": inWL
+        "inWatchlist": inWL,
+        "comments": comments[::-1]
     })
+
+
+# COMMENT ---------------------------------------
+def comment(request, listingId):
+    return render(request, "auctions/comment.html", {
+        "listingId": listingId
+    })
+
+def addComment(request, listingId):
+    list = Listing.objects.get(id=listingId)
+    Comment.objects.create(user=request.user,listing=list, text=request.POST.get("newComment"))
+    return HttpResponseRedirect(reverse("listing", args=[listingId]))
