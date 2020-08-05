@@ -22,12 +22,15 @@ class Listing(models.Model):
     description = models.CharField(max_length=1000)
     startingBid = models.FloatField()
     image = models.URLField()
+    date = models.DateTimeField(default=datetime.now, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT, default=1)
+    latestBid = models.ForeignKey("Bid", on_delete=models.PROTECT, related_name="ltBid", blank=True, null=True)
 
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.PROTECT)
     listing = models.ForeignKey(Listing, on_delete=models.PROTECT)
+    date = models.DateTimeField(default=datetime.now, blank=True)
     price = models.FloatField()
 
 class WatchList(models.Model):

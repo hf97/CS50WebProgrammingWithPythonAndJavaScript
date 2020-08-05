@@ -96,6 +96,7 @@ def watchlist(request):
         "listings": listings
     })
 
+def addWatchlist(request, )
 
 # CREATE LISTING --------------------------------
 class NewListing(forms.Form):
