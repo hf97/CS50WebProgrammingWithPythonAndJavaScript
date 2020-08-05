@@ -96,7 +96,23 @@ def watchlist(request):
         "listings": listings
     })
 
-def addWatchlist(request, )
+def addWatchlist(request, listingId):
+    listingToAdd = Listing.objects.get(id=listingId)
+    print(WatchList.objects.get(user=request.user))
+    try:
+        w = WatchList.objects.get(user=request.user)
+        w.listings.add(listingToAdd)
+    except:
+        watch = WatchList.objects.create(user=request.user)
+        watch.listings.add(listingToAdd)
+    return HttpResponseRedirect(reverse("listing", args=[listingId]))
+
+def removeWatchlist(request, listingId):
+    listing = Listing.objects.get(id=listingId)
+    obj = WatchList.objects.get(user=request.user)
+    obj.listings.remove(listing)
+    return HttpResponseRedirect(reverse("listing", args=[listingId]))
+
 
 # CREATE LISTING --------------------------------
 class NewListing(forms.Form):
@@ -122,6 +138,12 @@ def saveListing(request):
 # LISTING ---------------------------------------
 def listing(request, listingId):
     listing = Listing.objects.get(id=listingId)
+    obj = WatchList.objects.get(user=request.user)
+    if listing in obj.listings.all():
+        inWL = True
+    else:
+        inWL = False
     return render(request, "auctions/listing.html", {
-        "listing": listing
+        "listing": listing,
+        "inWatchlist": inWL
     })
