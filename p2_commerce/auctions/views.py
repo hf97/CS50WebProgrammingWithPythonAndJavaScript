@@ -98,7 +98,6 @@ def watchlist(request):
 
 def addWatchlist(request, listingId):
     listingToAdd = Listing.objects.get(id=listingId)
-    print(WatchList.objects.get(user=request.user))
     try:
         w = WatchList.objects.get(user=request.user)
         w.listings.add(listingToAdd)
@@ -138,24 +137,35 @@ def saveListing(request):
 # LISTING ---------------------------------------
 def listing(request, listingId):
     listing = Listing.objects.get(id=listingId)
-    try:
-        obj = WatchList.objects.get(user=request.user)
-        if listing in obj.listings.all():
-            inWL = True
-        else:
-            inWL = False
-    except:
-        inWL = False
     comments = []
     for comment in Comment.objects.all():
         if comment.listing.id == listingId:
             comments.append(comment)
+    inWL=False
+    if request.user == listing.user:
+        isMine=True
+    else:
+        isMine=False
+        try:
+            obj = WatchList.objects.get(user=request.user)
+            if listing in obj.listings.all():
+                inWL = True
+            else:
+                inWL = False
+        except:
+            print("No watchlist")
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "inWatchlist": inWL,
-        "comments": comments[::-1]
+        "comments": comments[::-1],
+        "isMine": isMine
     })
 
+
+# REMOVE LISTING --------------------------------
+def removeListing(request, listingId):
+    Listing.objects.filter(id=listingId).delete()
+    return HttpResponseRedirect(reverse("index"))
 
 # COMMENT ---------------------------------------
 def comment(request, listingId):
