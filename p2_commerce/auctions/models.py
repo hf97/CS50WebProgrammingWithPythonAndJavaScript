@@ -7,7 +7,7 @@ class User(AbstractUser):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    listing = models.ForeignKey("Listing", on_delete=models.PROTECT, default=0)
+    listing = models.ForeignKey("Listing", on_delete=models.CASCADE, default=0)
     text = models.CharField(max_length=1000)
     # TODO ver se blank esta bem
     date = models.DateTimeField(default=timezone.now, blank=True)
@@ -29,7 +29,7 @@ class Listing(models.Model):
 
 class Bid(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.PROTECT)
-    listing = models.ForeignKey(Listing, on_delete=models.PROTECT)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now, blank=True)
     price = models.FloatField()
 
