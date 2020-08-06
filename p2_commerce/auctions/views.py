@@ -164,6 +164,7 @@ def listing(request, listingId):
 
 # REMOVE LISTING --------------------------------
 def removeListing(request, listingId):
+    # TODO passar para acabado
     Listing.objects.filter(id=listingId).delete()
     return HttpResponseRedirect(reverse("index"))
 

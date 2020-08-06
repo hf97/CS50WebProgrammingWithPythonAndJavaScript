@@ -22,6 +22,7 @@ class Listing(models.Model):
     description = models.CharField(max_length=1000)
     startingBid = models.FloatField()
     image = models.URLField()
+    isActive = models.BooleanField(default=True, blank=True)
     date = models.DateTimeField(default=timezone.now, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT, default=1)
