@@ -38,6 +38,7 @@ class WatchList(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     listings = models.ManyToManyField(Listing, related_name="watch", null=True, blank=True)
 
-class wonListing(models.Model):
+class WonListing(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    listings = models.ManyToManyField(Listing, related_name="won", null=True, blank=True)
+    didWarning = models.BooleanField(default=False, blank=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True)

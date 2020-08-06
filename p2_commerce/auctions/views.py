@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import Category, Listing, User, WatchList, Bid, Comment
+from .models import Category, Listing, User, WatchList, Bid, Comment, WonListing
 
 # INDEX -----------------------------------------
 def index(request):
@@ -124,6 +124,17 @@ def createListing(request):
     })
 
 
+# LISTINGS WON ----------------------------------
+def listingsWon(request):
+    listings = []
+    for l in Listing.objects.filter(isActive=False):
+        if l.latestBid.bidder == request.user:
+            listings.append(l)
+    return render(request, "auctions/index.html", {
+        "listings": listings
+    })
+
+
 # SAVE LISTING ----------------------------------
 def saveListing(request):
     if request.method == "POST":
@@ -156,25 +167,36 @@ def listing(request, listingId):
             print("No watchlist")
     try:
         currentBid = listing.latestBid.price
+        nextBid = currentBid + 0.01
+        bidder = listing.latestBid.bidder
     except:
         currentBid = None
+        nextBid = 0
+        bidder = listing.latestBid.bidder
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "inWatchlist": inWL,
         "comments": comments[::-1],
         "isMine": isMine,
         "currentBid": currentBid,
-        "nextBid": nextBid
+        "nextBid": nextBid,
+        "bidder": bidder,
+        "isActive": listing.isActive
     })
 
 
 # REMOVE LISTING --------------------------------
 def removeListing(request, listingId):
     # TODO passar para acabado
+    Listing.objects.get(id=listingId).isActive=False
     # TODO dizer ao gajo que ganhou
+    # criar wonlisting para depois avisar
+    listi = Listing.objects.get(id=listingId)
+    wl = WonListing.objects.create(listi.latestBid.bidder, listing=listi)
     # TODO remover de watchlist
-    Listing.objects.filter(id=listingId).delete()
-    return HttpResponseRedirect(reverse("index"))
+    # remover da watchlist
+    obj = WatchList.objects.get(user=listi.latestBid.bidder)
+    obj.listings.remove(listi)
 
 
 # BID -------------------------------------------
