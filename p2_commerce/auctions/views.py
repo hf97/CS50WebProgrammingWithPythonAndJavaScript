@@ -170,9 +170,9 @@ def listing(request, listingId):
         nextBid = currentBid + 0.01
         bidder = listing.latestBid.bidder
     except:
-        currentBid = None
+        currentBid = False
         nextBid = 0
-        bidder = listing.latestBid.bidder
+        bidder = None
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "inWatchlist": inWL,
@@ -187,16 +187,20 @@ def listing(request, listingId):
 
 # REMOVE LISTING --------------------------------
 def removeListing(request, listingId):
-    # TODO passar para acabado
-    Listing.objects.get(id=listingId).isActive=False
+    lt = Listing.objects.get(id=listingId)
+    lt.isActive=False
+    lt.save()
     # TODO dizer ao gajo que ganhou
     # criar wonlisting para depois avisar
     listi = Listing.objects.get(id=listingId)
-    wl = WonListing.objects.create(listi.latestBid.bidder, listing=listi)
+    WonListing.objects.create(listi.latestBid.bidder, didWarning=False, listing=listi)
     # TODO remover de watchlist
     # remover da watchlist
-    obj = WatchList.objects.get(user=listi.latestBid.bidder)
-    obj.listings.remove(listi)
+    try:
+        obj = WatchList.objects.get(user=listi.latestBid.bidder)
+        obj.listings.remove(listi)
+    except:
+        print("no watchlist")
 
 
 # BID -------------------------------------------

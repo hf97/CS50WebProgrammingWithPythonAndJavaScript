@@ -2,36 +2,48 @@
 
 {% block body %}
     {% if isMine %}
-        <a href="{% url 'removeListing' listing.id %}">Remove listing</a>
+        {% if isActive %}
+            <a href="{% url 'removeListing' listing.id %}">Remove listing</a>
+        {% endif %}
+        <!-- # TODO watchlist if isMine -->
+        {% if inWatchlist %}
+            <a href="{% url 'removeWatchlist' listing.id %}">Remove from watchlist</a>
+        {% else %}
+            <a href="{% url 'addWatchlist' listing.id %}">Add to watchlist</a>
+        {% endif %}
         <br>
-        <i>Current Bid: {{ currentBid }} €</i>
-        <br>
-        <i>Bidder: {{ bidder }}</i>
+        {% if currentBid %}
+            <p>Current Bid: {{ currentBid }} €</p>
+            <p>Bidder: {{ bidder }}</p>
+        {% else %}
+            <p>Current Bid: None</p>
+        {% endif %}
     {% else %}
         {% if inWatchlist %}
             <a href="{% url 'removeWatchlist' listing.id %}">Remove from watchlist</a>
         {% else %}
             <a href="{% url 'addWatchlist' listing.id %}">Add to watchlist</a>
         {% endif %}
-            <br>
-            <br>
-            {% if currentBid %}
-                <p>Current Bid: {{ currentBid }} €</p>
-            {% else %}
-                <p>Current Bid: {{ currentBid }}</p>
-            {% endif %}
-            {% if isActive %}
-                <form action="{% url 'bid' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <label for="bidForm">Bid:</label>
-                    <input type="number" id="bidForm" name="bidForm" min="{{ nextBid }}" step=".01">
-                    <input type="submit">
-                </form>
-            {% else %}
-                <h3>Auctions Close</h3>
-                <!-- # TODO tester -->
-                <h5>Winner: {{ listing.latestBid.bidder }}</h5>
-            {% endif %}
+        <br>
+        <br>
+        {% if currentBid %}
+            <p>Current Bid: {{ currentBid }} €</p>
+            <p>Bidder: {{ bidder }}</p>
+        {% else %}
+            <p>Current Bid: None</p>
+        {% endif %}
+        {% if isActive %}
+            <form action="{% url 'bid' listing.id %}" method="POST">
+                {% csrf_token %}
+                <label for="bidForm">Bid:</label>
+                <input type="number" id="bidForm" name="bidForm" min="{{ nextBid }}" step=".01">
+                <input type="submit">
+            </form>
+        {% else %}
+            <h3>Auctions Close</h3>
+            <!-- # TODO tester -->
+            <h5>Winner: {{ listing.latestBid.bidder }}</h5>
+        {% endif %}
     {% endif %}
 
     <h2>Name: {{ listing.name }}</h2>
@@ -44,7 +56,9 @@
 
     <p>Description: {{ listing.description }}</p>
 
-    <a href="{% url 'comment' listing.id %}">Add comment</a>
+    {% if isActive %}
+        <a href="{% url 'comment' listing.id %}">Add comment</a>
+    {% endif %}
     {% for com in comments %}
         <div class="userComment">
             <i>User: {{ com.user }}</i>
