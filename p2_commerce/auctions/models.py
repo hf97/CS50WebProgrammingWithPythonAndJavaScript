@@ -37,3 +37,7 @@ class Bid(models.Model):
 class WatchList(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     listings = models.ManyToManyField(Listing, related_name="watch", null=True, blank=True)
+
+class wonListing(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    listings = models.ManyToManyField(Listing, related_name="won", null=True, blank=True)
