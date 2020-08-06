@@ -138,10 +138,13 @@ def saveListing(request):
 # LISTING ---------------------------------------
 def listing(request, listingId):
     listing = Listing.objects.get(id=listingId)
-    obj = WatchList.objects.get(user=request.user)
-    if listing in obj.listings.all():
-        inWL = True
-    else:
+    try:
+        obj = WatchList.objects.get(user=request.user)
+        if listing in obj.listings.all():
+            inWL = True
+        else:
+            inWL = False
+    except:
         inWL = False
     comments = []
     for comment in Comment.objects.all():
