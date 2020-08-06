@@ -155,7 +155,7 @@ def listing(request, listingId):
         except:
             print("No watchlist")
     try:
-        currentBid = str(listing.latestBid.price) + "€"
+        currentBid = listing.latestBid.price
     except:
         currentBid = None
     return render(request, "auctions/listing.html", {
@@ -163,13 +163,15 @@ def listing(request, listingId):
         "inWatchlist": inWL,
         "comments": comments[::-1],
         "isMine": isMine,
-        "currentBid": currentBid
+        "currentBid": currentBid,
+        "nextBid": nextBid
     })
 
 
 # REMOVE LISTING --------------------------------
 def removeListing(request, listingId):
     # TODO passar para acabado
+    # TODO dizer ao gajo que ganhou
     # TODO remover de watchlist
     Listing.objects.filter(id=listingId).delete()
     return HttpResponseRedirect(reverse("index"))
@@ -178,9 +180,10 @@ def removeListing(request, listingId):
 # BID -------------------------------------------
 def bid(request, listingId):
     listi = Listing.objects.get(id=listingId)
-    newBid = Bid.objects.create(bidder=request.user, listing=listi, price=request.POST.get("bidForm"))
-    listi.latestBid = newBid
-    listi.save()
+    if float(request.POST.get("bidForm")) >= float(listi.startingBid):
+        newBid = Bid.objects.create(bidder=request.user, listing=listi, price=request.POST.get("bidForm"))
+        listi.latestBid = newBid
+        listi.save()
     return HttpResponseRedirect(reverse("listing", args=[listingId]))
 
 # COMMENT ---------------------------------------

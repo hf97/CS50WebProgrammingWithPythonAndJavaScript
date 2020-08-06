@@ -11,13 +11,21 @@
         {% endif %}
             <br>
             <br>
-            <p>Current Bid: {{ currentBid }}</p>
+            {% if currentBid %}
+                <p>Current Bid: {{ currentBid }} €</p>
+            {% else %}
+                <p>Current Bid: {{ currentBid }}</p>
+            {% endif %}
             <form action="{% url 'bid' listing.id %}" method="POST">
                 {% csrf_token %}
                 <label for="bidForm">Bid:</label>
-                <input type="number" id="bidForm" name="bidForm" min="0" step=".01">
+                <input type="number" id="bidForm" name="bidForm" min="{{ nextBid }}" step=".01">
                 <input type="submit">
             </form>
+            <!-- # TODO error -->
+            {% if errorBid %}
+                <p>Can't place that bid</p>
+            {% endif %}
     {% endif %}
 
     <h2>Name: {{ listing.name }}</h2>
