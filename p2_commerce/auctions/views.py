@@ -10,7 +10,7 @@ from .models import Category, Listing, User, WatchList, Bid, Comment
 # INDEX -----------------------------------------
 def index(request):
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.filter(isActive=True)
     })
 
 
@@ -77,7 +77,7 @@ def categories(request):
 
 def singleCategory(request, category):
     listings = []
-    for listing in Listing.objects.all():
+    for listing in Listing.objects.filter(isActive=True):
         if str(listing.category) == (category):
             listings.append(listing)
     return render(request, "auctions/simgleCategory.html", {
@@ -154,19 +154,34 @@ def listing(request, listingId):
                 inWL = False
         except:
             print("No watchlist")
+    try:
+        currentBid = str(listing.latestBid.price) + "€"
+    except:
+        currentBid = None
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "inWatchlist": inWL,
         "comments": comments[::-1],
-        "isMine": isMine
+        "isMine": isMine,
+        "currentBid": currentBid
     })
 
 
 # REMOVE LISTING --------------------------------
 def removeListing(request, listingId):
     # TODO passar para acabado
+    # TODO remover de watchlist
     Listing.objects.filter(id=listingId).delete()
     return HttpResponseRedirect(reverse("index"))
+
+
+# BID -------------------------------------------
+def bid(request, listingId):
+    listi = Listing.objects.get(id=listingId)
+    newBid = Bid.objects.create(bidder=request.user, listing=listi, price=request.POST.get("bidForm"))
+    listi.latestBid = newBid
+    listi.save()
+    return HttpResponseRedirect(reverse("listing", args=[listingId]))
 
 # COMMENT ---------------------------------------
 def comment(request, listingId):
@@ -175,6 +190,6 @@ def comment(request, listingId):
     })
 
 def addComment(request, listingId):
-    list = Listing.objects.get(id=listingId)
-    Comment.objects.create(user=request.user,listing=list, text=request.POST.get("newComment"))
+    listi = Listing.objects.get(id=listingId)
+    Comment.objects.create(user=request.user,listing=listi, text=request.POST.get("newComment"))
     return HttpResponseRedirect(reverse("listing", args=[listingId]))
