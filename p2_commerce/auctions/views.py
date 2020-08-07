@@ -157,14 +157,14 @@ def listing(request, listingId):
         isMine=True
     else:
         isMine=False
-        try:
-            obj = WatchList.objects.get(user=request.user)
-            if listing in obj.listings.all():
-                inWL = True
-            else:
-                inWL = False
-        except:
-            print("No watchlist")
+    try:
+        obj = WatchList.objects.get(user=request.user)
+        if listing in obj.listings.all():
+            inWL = True
+        else:
+            inWL = False
+    except:
+        print("No watchlist")
     try:
         currentBid = listing.latestBid.price
         nextBid = currentBid + 0.01
@@ -173,6 +173,7 @@ def listing(request, listingId):
         currentBid = False
         nextBid = 0
         bidder = None
+    print(inWL)
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "inWatchlist": inWL,
@@ -181,7 +182,8 @@ def listing(request, listingId):
         "currentBid": currentBid,
         "nextBid": nextBid,
         "bidder": bidder,
-        "isActive": listing.isActive
+        "isActive": listing.isActive,
+        "date": listing.date
     })
 
 
