@@ -147,7 +147,7 @@ def saveListing(request):
         Listing.objects.create(name=request.POST.get("name"), description=request.POST.get("description"), startingBid=request.POST.get("startingBid"), image=request.POST.get("image"), user=request.user, category=Category.objects.get(id=request.POST.get("category")))
     # TODO messagem erro
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.filter(isActive=True)
     })
 
 
@@ -205,7 +205,7 @@ def removeListing(request, listingId):
         obj.listings.remove(listi)
     except:
         print("no watchlist")
-    return HttpResponseRedirect(reverse("index", args=[listingId]))
+    return HttpResponseRedirect(reverse("index"))
 
 
 # BID -------------------------------------------
