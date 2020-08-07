@@ -130,7 +130,7 @@ def listingsWon(request):
     for l in Listing.objects.filter(isActive=False):
         if l.latestBid.bidder == request.user:
             listings.append(l)
-    return render(request, "auctions/index.html", {
+    return render(request, "auctions/listingsiwon.html", {
         "listings": listings
     })
 
@@ -190,17 +190,14 @@ def removeListing(request, listingId):
     lt = Listing.objects.get(id=listingId)
     lt.isActive=False
     lt.save()
-    # TODO dizer ao gajo que ganhou
-    # criar wonlisting para depois avisar
     listi = Listing.objects.get(id=listingId)
-    WonListing.objects.create(listi.latestBid.bidder, didWarning=False, listing=listi)
-    # TODO remover de watchlist
-    # remover da watchlist
+    WonListing.objects.create(user=listi.latestBid.bidder, didWarning=False, listing=listi)
     try:
         obj = WatchList.objects.get(user=listi.latestBid.bidder)
         obj.listings.remove(listi)
     except:
         print("no watchlist")
+    return HttpResponseRedirect(reverse("index", args=[listingId]))
 
 
 # BID -------------------------------------------
