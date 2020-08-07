@@ -18,9 +18,8 @@ def index(request):
         "entries": util.list_entries(),
     })
 
+
 # PAGES -----------------------------------------
-
-
 def testar(teste):
     if(teste is not None):
         return markdown2.markdown(teste)
@@ -33,9 +32,8 @@ def title(request, title):
         "title": title
     })
 
+
 # NEW PAGE --------------------------------------
-
-
 class NewPage(forms.Form):
     name = forms.CharField(label="Title")
     info = forms.CharField(required=False, widget=forms.Textarea(
@@ -67,9 +65,8 @@ def new(request):
             "form": NewPage()
         })
 
+
 # RANDOM PAGE -----------------------------------
-
-
 def randomPage(request):
     entries = util.list_entries()  # list of wikis
     selected_page = random.choice(entries)
@@ -78,13 +75,8 @@ def randomPage(request):
         "title": selected_page
     })
 
+
 # SEARCH ----------------------------------------
-
-
-class searchForm(forms.Form):
-    searchQuerie = forms.CharField(request.POST)
-
-
 def searchResults(name):
     listSearchResults = []
     entries = util.list_entries()
