@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>My listings</h2>
+
+    {% for listing in listings %}
+        <div class="container" id="{{ listing.id }}">
+            <div class="row no-gutters">
+                <div class="col-sm-4 col-md-4">
+                    <img src="{{ listing.image }}" alt="listing image">
+                </div>
+                <div class="col-8 col-md-8">
+                    <a href="{% url 'listing' listing.id %}">{{ listing.name }}</a>
+                    <p>Starting Bid: {{ listing.startingBid }}</p>
+                    <p>Category: {{ listing.category }}</p>
+                    <p>Description: {{ listing.description }}</p>
+                    <br>
+                    <i>Is Active: {{ listing.isActive }} - </i>
+                    <i>Last bid date: {{ listing.latestBid.date }}</i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

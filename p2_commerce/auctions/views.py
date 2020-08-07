@@ -135,6 +135,12 @@ def listingsWon(request):
     })
 
 
+# MY LISTINGS -----------------------------------
+def myListings(request):
+    return render(request, "auctions/myListings.html", {
+        "listings": Listing.objects.filter(user=request.user)
+    })
+
 # SAVE LISTING ----------------------------------
 def saveListing(request):
     if request.method == "POST":
