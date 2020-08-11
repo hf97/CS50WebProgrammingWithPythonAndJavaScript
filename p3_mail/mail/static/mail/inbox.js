@@ -20,7 +20,33 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('#send').addEventListener('click', send_mail);
+  })
 }
+
+
+function send_mail(){
+  
+  const recipients = document.getElementById('compose-recipients').value;
+  const subject = document.getElementById('compose-subject').value;
+  const body = document.getElementById('compose-doby').value;
+
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+      console.log(result);
+  });
+}
+
 
 function load_mailbox(mailbox) {
   
@@ -30,4 +56,11 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    console.log(emails);
+  });
+
 }
