@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded",
         }),
       })
       .then((response) => response.json())
-      .then((result) => {
-        if(result.message === "Email sent successfully."){
+      .then((results) => {
+        if(results.message === "Email sent successfully."){
           load_mailbox("sent")
         }else{
-          msg.innerHTML = `<div class="alert alert-danger" role="alert">${result.error}</div>`;
+          msg.innerHTML = `<div class="alert alert-danger" role="alert">${results.error}</div>`;
         }
       })
     })
