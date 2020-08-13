@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded",
     
     form.addEventListener('submit', (event) => {
     
-      event.preventDefault()
+      event.preventDefault();
 
       fetch("/emails", {
         method: "POST",
@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded",
         }else{
           msg.innerHTML = `<div class="alert alert-danger" role="alert">${results.error}</div>`;
         }
-      })
-    })
+      });
+    });
   },
   false
 )
