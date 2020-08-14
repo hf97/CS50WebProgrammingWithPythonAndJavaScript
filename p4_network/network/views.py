@@ -9,10 +9,24 @@ from django.contrib.auth.decorators import login_required
 
 from .models import User, Post, Profile
 
+
+# INDEX -----------------------------------------
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.objects.all().order_by('-timestamp')
+    paginator = Paginator(posts, 10)
+    if request.GET.get('page') != None:
+        try:
+            posts = paginator.page(request.GET.get('page'))
+        except:
+            posts = paginator.page(1)
+    else:
+        posts = paginator.page(1)
+    return render(request, 'network/index.html', {
+        'posts': posts
+    })
 
 
+# LOGIN -----------------------------------------
 def login_view(request):
     if request.method == "POST":
 
@@ -33,11 +47,13 @@ def login_view(request):
         return render(request, "network/login.html")
 
 
+# LOGOUT ----------------------------------------
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
 
+# REGISTER --------------------------------------
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -65,6 +81,7 @@ def register(request):
         return render(request, "network/register.html")
 
 
+# ADDPOST ---------------------------------------
 @login_required
 def addPost(request):
     if request.method == "POST":
@@ -82,3 +99,50 @@ def addPost(request):
             }
             return JsonResponse(context, status=201)
     return JsonResponse({}, status=400)
+
+
+# EDITPOST --------------------------------------
+def editPost(request):
+    pass
+
+
+# LIKE ------------------------------------------
+def like(request):
+    pass
+
+
+# FOLLOW ----------------------------------------
+def follow(request):
+    pass
+
+
+# FOLLOWING -------------------------------------
+def following(request):
+    pass
+
+
+# PROFILE ---------------------------------------
+def profile(request, username):
+    try:
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
+    except:
+        # TODO error
+        return render(request, 'network/profile.html', {
+            error
+        })
+    posts = Post.objects.filter(user=user).order_by('-timestamp')
+    paginator = Paginator(posts, 10)
+    if request.GET.get('page') != None:
+        try:
+            posts = paginator.page(request.GET.get('page'))
+        except:
+            posts = paginator.page(1)
+    else:
+        posts = paginator.page(1)
+    return render(request, 'network/profile.html', {
+        'posts': posts,
+        'user': user,
+        'profile': profile,
+    })
+
