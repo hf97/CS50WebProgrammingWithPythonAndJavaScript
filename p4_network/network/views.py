@@ -126,9 +126,10 @@ def profile(request, username):
     try:
         user = User.objects.get(username=username)
         profile = Profile.objects.get(user=user)
+        requestUser = Profile.objects.get(user.request.user) # to check if is following
     except:
-        # TODO error
         return render(request, 'network/profile.html', {
+            # TODO error
             error
         })
     posts = Post.objects.filter(user=user).order_by('-timestamp')
@@ -143,6 +144,7 @@ def profile(request, username):
     return render(request, 'network/profile.html', {
         'posts': posts,
         'user': user,
+        'requestUser': requestUser,
         'profile': profile,
     })
 
