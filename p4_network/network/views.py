@@ -3,9 +3,11 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
-from .models import User
-
+from .models import User, Post, Profile
 
 def index(request):
     return render(request, "network/index.html")
@@ -61,3 +63,22 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+@login_required
+def addPost(request):
+    if request.method == "POST":
+        post = request.POST.get('post')
+        if len(post) != 0:
+            obj = Post()
+            obj.post = post
+            obj.user = request.user
+            obj.save()
+            context = {
+                'status': 201,
+                'postId': obj.id,
+                'username': request.user.username,
+                'timestamp': obj.timestamp.strftime("%b %d %Y, %I:%M %p")
+            }
+            return JsonResponse(context, status=201)
+    return JsonResponse({}, status=400)
