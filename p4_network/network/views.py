@@ -5,12 +5,15 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 from .models import User, Post, Profile
 
 
 # INDEX -----------------------------------------
+@login_required
 def index(request):
     posts = Post.objects.all().order_by('-timestamp')
     paginator = Paginator(posts, 10)
@@ -48,9 +51,10 @@ def login_view(request):
 
 
 # LOGOUT ----------------------------------------
+@login_required
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("login"))
 
 
 # REGISTER --------------------------------------
@@ -76,63 +80,135 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
+        profile = Profile()
+        profile.user = user
+        profile.save()
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
 
 
-# ADDPOST ---------------------------------------
+# ADD -------------------------------------------
 @login_required
-def addPost(request):
+@csrf_exempt
+def addpost(request):
     if request.method == "POST":
         post = request.POST.get('post')
         if len(post) != 0:
-            obj = Post()
-            obj.post = post
-            obj.user = request.user
-            obj.save()
-            context = {
+            new = Post()
+            new.post = post
+            new.user = request.user
+            new.save()
+            return JsonResponse({
                 'status': 201,
-                'postId': obj.id,
+                'post_id': new.id,
                 'username': request.user.username,
-                'timestamp': obj.timestamp.strftime("%b %d %Y, %I:%M %p")
-            }
-            return JsonResponse(context, status=201)
+                'timestamp': new.timestamp.strftime("%B %d, %Y, %I:%M %p")
+                },
+                status=201
+            )
     return JsonResponse({}, status=400)
 
 
-# EDITPOST --------------------------------------
-def editPost(request):
-    pass
+# EDIT ------------------------------------------
+@login_required
+@csrf_exempt
+# TODO data de edicao do post
+def editpost(request):
+    if request.method == "POST":
+        post_id = request.POST.get('id')
+        new = request.POST.get('post')
+        try:
+            post = Post.objects.get(id=post_id)
+            if post.user == request.user:
+                post.post = new.strip()
+                post.lastEdit = timezone.now()
+                post.save()
+                return JsonResponse({}, status=201)
+        except:
+            return JsonResponse({}, status=404)
+    return JsonResponse({}, status=400)
 
 
 # LIKE ------------------------------------------
+@login_required
+@csrf_exempt
 def like(request):
-    pass
+    if request.method == "POST":
+        post_id = request.POST.get('id')
+        is_liked = request.POST.get('is_liked')
+        try:
+            post = Post.objects.get(id=post_id)
+            if is_liked == 'no':
+                post.likes.add(request.user)
+                is_liked = 'yes'
+            elif is_liked == 'yes':
+                post.likes.remove(request.user)
+                is_liked = 'no'
+            post.save()
+            return JsonResponse({
+                'like_count': post.likes.count(),
+                'is_liked': is_liked,
+                "status": 201
+            })
+        except:
+            return JsonResponse({
+                'error': "Post not found", "status": 404
+            })
+    return JsonResponse({}, status=400)
 
 
 # FOLLOW ----------------------------------------
+@login_required
+@csrf_exempt
 def follow(request):
-    pass
+    if request.method == "POST":
+        user = request.POST.get('user')
+        action = request.POST.get('action')
+        if action == 'Follow':
+            try:
+                user = User.objects.get(username=user)
+                profile = Profile.objects.get(user=request.user)
+                profile.following.add(user)
+                profile.save()
+                profile = Profile.objects.get(user=user)
+                profile.followers.add(request.user)
+                profile.save()
+                return JsonResponse({
+                    'status': 201,
+                    'action': "Unfollow",
+                    "follower_count": profile.followers.count()
+                    },
+                    status=201
+                )
+            except:
+                return JsonResponse({}, status=404)
+        else:
+            try:
+                user = User.objects.get(username=user)
+                profile = Profile.objects.get(user=request.user)
+                profile.following.remove(user)
+                profile.save()
+                profile = Profile.objects.get(user=user)
+                profile.followers.remove(request.user)
+                profile.save()
+                return JsonResponse({
+                    'status': 201,
+                    'action': "Follow",
+                    "follower_count": profile.followers.count()
+                    },
+                    status=201
+                )
+            except:
+                return JsonResponse({}, status=404)
+    return JsonResponse({}, status=400)
 
 
 # FOLLOWING -------------------------------------
+@login_required
 def following(request):
-    pass
-
-
-# PROFILE ---------------------------------------
-def profile(request, username):
-    try:
-        user = User.objects.get(username=username)
-        profile = Profile.objects.get(user=user)
-        requestUser = Profile.objects.get(user.request.user) # to check if is following
-    except:
-        return render(request, 'network/profile.html', {
-            # TODO error
-            error
-        })
-    posts = Post.objects.filter(user=user).order_by('-timestamp')
+    following = Profile.objects.get(user=request.user).following.all()
+    posts = Post.objects.filter(user__in=following).order_by('-timestamp')
     paginator = Paginator(posts, 10)
     if request.GET.get('page') != None:
         try:
@@ -141,10 +217,38 @@ def profile(request, username):
             posts = paginator.page(1)
     else:
         posts = paginator.page(1)
+    return render(request, 'network/following.html', {
+        'posts': posts
+    })
+
+
+# PROFILE ---------------------------------------
+@login_required
+def profile(request, username):
+    try:
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
+        users_profile = Profile.objects.get(user=request.user)
+    except:
+        return render(request, 'network/profile.html', {"error": True})
+    posts = Post.objects.filter(user=user).order_by('-timestamp')
+    paginator = Paginator(posts, 10)
+    if request.GET.get("page") != None:
+        try:
+            posts = paginator.page(request.GET.get("page"))
+        except:
+            posts = paginator.page(1)
+    else:
+        posts = paginator.page(1)
+    context = {
+        'posts': posts,
+        "user": user,
+        "profile": profile,
+        'users_profile': users_profile
+    }
     return render(request, 'network/profile.html', {
         'posts': posts,
         'user': user,
-        'requestUser': requestUser,
         'profile': profile,
+        'users_profile': users_profile
     })
-
